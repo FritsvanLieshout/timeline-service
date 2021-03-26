@@ -31,7 +31,7 @@ public class TweetConsumer {
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private TweetTimeLineRepository tweetTimeLineRepository;
-    private EmailService emailService;
+    //private EmailService emailService;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
     public TweetConsumer(KafkaProperties kafkaProperties, TweetTimeLineRepository tweetTimeLineRepository) {
@@ -63,8 +63,7 @@ public class TweetConsumer {
                         tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
                         tweetTimeLineRepository.save(tweetTimeline);
 
-                        emailService.sendSimpleMessage(tweetTimelineDTO);
-
+                        //emailService.sendSimpleMessage(tweetTimelineDTO);
                     }
                 }
                 kafkaConsumer.commitSync();

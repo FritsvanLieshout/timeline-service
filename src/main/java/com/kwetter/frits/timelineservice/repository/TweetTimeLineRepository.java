@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface TweetTimeLineRepository extends MongoRepository<TweetTimeline, Long> {
+public interface TweetTimeLineRepository extends MongoRepository<TweetTimeline, String> {
 }

@@ -1,6 +1,8 @@
 package com.kwetter.frits.timelineservice.service;
 
 import com.kwetter.frits.timelineservice.service.dto.TweetTimelineDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -8,13 +10,16 @@ import org.springframework.mail.javamail.JavaMailSender;
 @Service
 public class EmailService {
 
-    private JavaMailSender javaMailSender;
+    //private JavaMailSender javaMailSender;
+    private final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     private String emailAddress;
 
-    public EmailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
+    public EmailService() {}
+
+    //public EmailService(JavaMailSender javaMailSender) {
+     //   this.javaMailSender = javaMailSender;
+    //}
 
     public void sendSimpleMessage(TweetTimelineDTO tweetTimelineDTO) throws Exception {
         emailAddress = "fritske05@gmail.com";
@@ -24,7 +29,9 @@ public class EmailService {
             message.setSubject("Tweet Posted on: " + tweetTimelineDTO.getTweetPosted());
             message.setText(tweetTimelineDTO.getTweetMessage());
             message.setFrom("Kwetter");
-            javaMailSender.send(message);
+            //javaMailSender.send(message);
+            log.info(tweetTimelineDTO.getTweetMessage() + ", posted on: " + tweetTimelineDTO.getTweetPosted());
+
         } catch (Exception exception) {
             throw new Exception(exception);
         }
