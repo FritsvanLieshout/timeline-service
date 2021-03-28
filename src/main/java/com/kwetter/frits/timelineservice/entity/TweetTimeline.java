@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.Instant;
 
 @Document(collection = "tweet_timeline")
 public class TweetTimeline implements Serializable {
@@ -14,7 +13,7 @@ public class TweetTimeline implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Long id;
+    private String id;
 
     @NotNull
     @Field("tweet_userId")
@@ -28,11 +27,11 @@ public class TweetTimeline implements Serializable {
     @Field("tweet_posted")
     private String tweetPosted;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
