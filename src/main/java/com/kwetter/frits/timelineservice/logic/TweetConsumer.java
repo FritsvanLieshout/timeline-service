@@ -11,6 +11,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +25,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Service
 public class TweetConsumer {
 
+    @Autowired
+    SimpMessagingTemplate template;
+
     private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
@@ -31,7 +36,6 @@ public class TweetConsumer {
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private TweetTimeLineRepository tweetTimeLineRepository;
-    //private EmailService emailService;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
     public TweetConsumer(KafkaProperties kafkaProperties, TweetTimeLineRepository tweetTimeLineRepository) {
@@ -63,7 +67,7 @@ public class TweetConsumer {
                         tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
                         tweetTimeLineRepository.save(tweetTimeline);
 
-                        //emailService.sendSimpleMessage(tweetTimelineDTO);
+                        listen(tweetTimeline);
                     }
                 }
                 kafkaConsumer.commitSync();
@@ -88,6 +92,11 @@ public class TweetConsumer {
         log.info("Shutdown Kafka consumer");
         closed.set(true);
         kafkaConsumer.wakeup();
+    }
+
+    public void listen(TweetTimeline tweetTimeline) {
+        System.out.println("sending via kafka listener..");
+        template.convertAndSend("/topic_timeline", tweetTimeline);
     }
 
 }

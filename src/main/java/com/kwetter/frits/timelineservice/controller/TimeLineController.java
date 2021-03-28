@@ -4,6 +4,9 @@ import com.kwetter.frits.timelineservice.entity.TweetTimeline;
 import com.kwetter.frits.timelineservice.logic.TimeLineLogicImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +35,11 @@ public class TimeLineController {
         catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @MessageMapping("/sendTweet")
+    @SendTo("/topic_timeline")
+    public TweetTimeline broadcastGroupMessage(@Payload TweetTimeline tweetTimeline) {
+        return tweetTimeline;
     }
 }
