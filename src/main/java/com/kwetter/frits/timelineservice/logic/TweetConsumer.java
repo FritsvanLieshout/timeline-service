@@ -1,10 +1,10 @@
-package com.kwetter.frits.timelineservice.service;
+package com.kwetter.frits.timelineservice.logic;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
 import com.kwetter.frits.timelineservice.entity.TweetTimeline;
 import com.kwetter.frits.timelineservice.repository.TweetTimeLineRepository;
-import com.kwetter.frits.timelineservice.service.dto.TweetTimelineDTO;
+import com.kwetter.frits.timelineservice.logic.dto.TweetTimelineDTO;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

@@ -1,4 +1,4 @@
-package com.kwetter.frits.timelineservice.service.dto;
+package com.kwetter.frits.timelineservice.logic.dto;
 
 public class TweetTimelineDTO {
 
