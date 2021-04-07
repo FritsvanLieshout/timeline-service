@@ -16,8 +16,8 @@ public class TweetTimeline implements Serializable {
     private String id;
 
     @NotNull
-    @Field("tweet_userId")
-    private int tweetUserId;
+    @Field("tweet_user")
+    private TweetUser tweetUser;
 
     @NotNull
     @Field("tweet_message")
@@ -35,16 +35,16 @@ public class TweetTimeline implements Serializable {
         this.id = id;
     }
 
-    public int getTweetUserId() {
-        return tweetUserId;
+    public TweetUser getTweetUser() {
+        return tweetUser;
     }
 
-    public void setTweetUserId(int tweetUserId) {
-        this.tweetUserId = tweetUserId;
+    public void setTweetUser(TweetUser tweetUser) {
+        this.tweetUser = tweetUser;
     }
 
-    public TweetTimeline tweetUserId(int tweetUserId) {
-        this.tweetUserId = tweetUserId;
+    public TweetTimeline tweetTimeline(TweetUser tweetUser) {
+        this.tweetUser = tweetUser;
         return this;
     }
 
@@ -92,6 +92,6 @@ public class TweetTimeline implements Serializable {
 
     @Override
     public String toString() {
-        return "TweetTimeline [id=" + id + ", tweetUserId=" + tweetUserId + ", tweetMessage=" + tweetMessage + ", tweetPosted=" + tweetPosted + "]";
+        return "TweetTimeline [id=" + id + ", tweetUser=" + tweetUser.toString() + ", tweetMessage=" + tweetMessage + ", tweetPosted=" + tweetPosted + "]";
     }
 }

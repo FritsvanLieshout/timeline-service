@@ -62,7 +62,7 @@ public class TweetConsumer {
                         ObjectMapper objectMapper = new ObjectMapper();
                         TweetTimelineDTO tweetTimelineDTO = objectMapper.readValue(record.value(), TweetTimelineDTO.class);
                         TweetTimeline tweetTimeline = new TweetTimeline();
-                        tweetTimeline.setTweetUserId(tweetTimelineDTO.getTweetUserId());
+                        tweetTimeline.setTweetUser(tweetTimelineDTO.getTweetUser());
                         tweetTimeline.setTweetMessage(tweetTimelineDTO.getTweetMessage());
                         tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
                         tweetTimeLineRepository.save(tweetTimeline);
@@ -72,7 +72,6 @@ public class TweetConsumer {
                 }
                 kafkaConsumer.commitSync();
             } catch (WakeupException e) {
-                // Ignore exception if closing
                 if (!closed.get()) throw e;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -98,5 +97,4 @@ public class TweetConsumer {
         System.out.println("sending via kafka listener..");
         template.convertAndSend("/topic_timeline", tweetTimeline);
     }
-
 }

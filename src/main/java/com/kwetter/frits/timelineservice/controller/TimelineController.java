@@ -16,11 +16,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/timeline")
-public class TimeLineController {
+public class TimelineController {
 
     private final TimeLineLogicImpl timeLineLogic;
 
-    public TimeLineController(TimeLineLogicImpl timeLineLogic) { this.timeLineLogic = timeLineLogic; }
+    public TimelineController(TimeLineLogicImpl timeLineLogic) { this.timeLineLogic = timeLineLogic; }
 
     @GetMapping("/all")
     public ResponseEntity<List<TweetTimeline>> retrieveAllTweetsByTimeLine() {
