@@ -32,7 +32,7 @@ public class TweetConsumer {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "topic_timeline";
+    public static final String TOPIC = "tweet-posted";
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private TweetTimeLineRepository tweetTimeLineRepository;
