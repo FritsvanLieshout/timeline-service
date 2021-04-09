@@ -1,7 +1,7 @@
 package com.kwetter.frits.timelineservice.controller;
 
 import com.kwetter.frits.timelineservice.entity.TweetTimeline;
-import com.kwetter.frits.timelineservice.logic.TimeLineLogicImpl;
+import com.kwetter.frits.timelineservice.logic.TimelineLogicImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,9 +18,9 @@ import java.util.List;
 @RequestMapping("/api/timeline")
 public class TimelineController {
 
-    private final TimeLineLogicImpl timeLineLogic;
+    private final TimelineLogicImpl timeLineLogic;
 
-    public TimelineController(TimeLineLogicImpl timeLineLogic) { this.timeLineLogic = timeLineLogic; }
+    public TimelineController(TimelineLogicImpl timeLineLogic) { this.timeLineLogic = timeLineLogic; }
 
     @GetMapping("/all")
     public ResponseEntity<List<TweetTimeline>> retrieveAllTweetsByTimeLine() {
