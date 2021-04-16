@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
 import com.kwetter.frits.timelineservice.entity.UserTimeline;
 import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
-import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
 import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -25,9 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class UserConsumer {
-
-    @Autowired
-    SimpMessagingTemplate template;
 
     private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
