@@ -1,17 +1,19 @@
 package com.kwetter.frits.timelineservice.logic.dto;
 
+import com.kwetter.frits.timelineservice.entity.TweetUser;
+
 public class TweetTimelineDTO {
 
-    private int tweetUserId;
+    private TweetUser tweetUser;
     private String tweetMessage;
     private String tweetPosted;
 
-    public int getTweetUserId() {
-        return tweetUserId;
+    public TweetUser getTweetUser() {
+        return tweetUser;
     }
 
-    public void setTweetUserId(int tweetUserId) {
-        this.tweetUserId = tweetUserId;
+    public void setTweetUser(TweetUser tweetUser) {
+        this.tweetUser = tweetUser;
     }
 
     public String getTweetMessage() {

@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public interface TweetTimeLineRepository extends MongoRepository<TweetTimeline, String> {
+public interface TweetTimelineRepository extends MongoRepository<TweetTimeline, String> {
     List<TweetTimeline> findAllByOrderByTweetPostedDesc();
 }
