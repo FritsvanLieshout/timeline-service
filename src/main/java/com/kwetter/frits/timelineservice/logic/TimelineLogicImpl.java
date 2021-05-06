@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -38,18 +39,14 @@ public class TimelineLogicImpl implements TimeLineLogic {
     }
 
     private List<TweetTimeline> getFollowingTweets(String username) {
-        log.info("----------- START -----------");
         List<TweetTimeline> timeline = new ArrayList<>();
         List<FollowTimeline> following = followTimelineRepository.findAllByUsername(username);
 
-        log.info(String.valueOf(following.size()));
-
         for (var user : following) {
-            log.info(user.getFollowingUsername() + ", user: " + user.getUsername());
             timeline.addAll(tweetTimeLineRepository.findAllByTweetUser_Username(user.getFollowingUsername()));
         }
 
-        log.info("----------- END -----------");
+        timeline.sort(Comparator.comparing(TweetTimeline::getTweetPosted).reversed());
         return timeline;
     }
 }
