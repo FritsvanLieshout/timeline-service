@@ -3,13 +3,13 @@ package com.kwetter.frits.timelineservice.logic.dto;
 public class FollowTimelineDTO {
 
     private String username;
-    private String followUsername;
+    private String followingUsername;
 
     public FollowTimelineDTO() {}
 
-    public FollowTimelineDTO(String username, String followUsername) {
+    public FollowTimelineDTO(String username, String followingUsername) {
         this.username = username;
-        this.followUsername = followUsername;
+        this.followingUsername = followingUsername;
     }
 
     public String getUsername() {
@@ -20,11 +20,11 @@ public class FollowTimelineDTO {
         this.username = username;
     }
 
-    public String getFollowUsername() {
-        return followUsername;
+    public String getFollowingUsername() {
+        return followingUsername;
     }
 
-    public void setFollowUsername(String followUsername) {
-        this.followUsername = followUsername;
+    public void setFollowingUsername(String followingUsername) {
+        this.followingUsername = followingUsername;
     }
 }

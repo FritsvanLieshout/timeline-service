@@ -9,4 +9,5 @@ import java.util.List;
 @Component
 public interface TweetTimelineRepository extends MongoRepository<TweetTimeline, String> {
     List<TweetTimeline> findAllByOrderByTweetPostedDesc();
+    List<TweetTimeline> findAllByTweetUser_Username(String username);
 }

@@ -59,8 +59,8 @@ public class UnFollowConsumer {
 
                         var objectMapper = new ObjectMapper();
                         var followTimelineDTO = objectMapper.readValue(record.value(), FollowTimelineDTO.class);
-                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowUsername());
-                        followTimelineRepository.deleteFollowByUsernameAndFollowUsername(followTimeline.getUsername(), followTimeline.getFollowUsername());
+                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowingUsername());
+                        followTimelineRepository.deleteFollowByUsernameAndFollowingUsername(followTimeline.getUsername(), followTimeline.getFollowingUsername());
                     }
                 }
                 kafkaConsumer.commitSync();

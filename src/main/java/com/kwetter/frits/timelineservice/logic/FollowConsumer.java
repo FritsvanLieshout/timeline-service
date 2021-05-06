@@ -59,7 +59,7 @@ public class FollowConsumer {
 
                         var objectMapper = new ObjectMapper();
                         var followTimelineDTO = objectMapper.readValue(record.value(), FollowTimelineDTO.class);
-                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowUsername());
+                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowingUsername());
                         followTimelineRepository.save(followTimeline);
                     }
                 }
