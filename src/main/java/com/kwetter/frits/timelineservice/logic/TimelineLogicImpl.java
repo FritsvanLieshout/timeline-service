@@ -35,7 +35,9 @@ public class TimelineLogicImpl implements TimeLineLogic {
 
     @Override
     public List<TweetTimeline> findOwnTweets(String username) {
-        return null;
+        List<TweetTimeline> timeline = new ArrayList<>(tweetTimeLineRepository.findAllByTweetUser_Username(username));
+        timeline.sort(Comparator.comparing(TweetTimeline::getTweetPosted).reversed());
+        return timeline;
     }
 
     private List<TweetTimeline> getFollowingTweets(String username) {

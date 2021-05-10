@@ -26,12 +26,12 @@ public class TimelineController {
     @GetMapping("/all")
     public ResponseEntity<List<TweetTimeline>> retrieveAllTweetsByTimeLine() {
         try {
-            List<TweetTimeline> _timeline = new ArrayList<>(timeLineLogic.findAllOrderByDesc());
+            List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findAllOrderByDesc());
 
-            if (_timeline.isEmpty()) {
+            if (timeline.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(_timeline, HttpStatus.OK);
+            return new ResponseEntity<>(timeline, HttpStatus.OK);
         }
         catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -39,10 +39,24 @@ public class TimelineController {
     }
 
     @GetMapping("/unique")
-    public ResponseEntity<?> generateTimeline(@RequestParam String username) {
+    public ResponseEntity<List<TweetTimeline>> generateTimeline(@RequestParam String username) {
         try {
             List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findTweetsByFollowing(username));
 
+            if (timeline.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(timeline, HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/own/tweets")
+    public ResponseEntity<List<TweetTimeline>> generateOwnTimeline(@RequestParam String username) {
+        try {
+            List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findOwnTweets(username));
             if (timeline.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
