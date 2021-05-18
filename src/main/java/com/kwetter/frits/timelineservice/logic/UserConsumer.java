@@ -62,6 +62,7 @@ public class UserConsumer {
                         userTimeline.setNickName(userTimelineDTO.getNickName());
                         userTimeline.setProfileImage(userTimelineDTO.getProfileImage());
                         userTimeline.setVerified(userTimelineDTO.getVerified());
+                        userTimeline.setBiography(userTimelineDTO.getBiography());
                         userTimelineRepository.save(userTimeline);
                     }
                 }

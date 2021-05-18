@@ -9,15 +9,17 @@ public class TweetUser {
     private String nickName;
     private String profileImage;
     private Boolean verified;
+    private String biography;
 
     public TweetUser() {}
 
-    public TweetUser(UUID userId, String username, String nickName, String profileImage, Boolean verified) {
+    public TweetUser(UUID userId, String username, String nickName, String profileImage, Boolean verified, String biography) {
         this.userId = userId;
         this.username = username;
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.verified = verified;
+        this.biography = biography;
     }
 
     public UUID getUserId() {
@@ -52,13 +54,13 @@ public class TweetUser {
         this.profileImage = profileImage;
     }
 
-    public Boolean getVerified() {
-        return verified;
-    }
+    public Boolean getVerified() { return verified; }
 
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
-    }
+    public void setVerified(Boolean verified) { this.verified = verified; }
+
+    public String getBiography() { return biography; }
+
+    public void setBiography(String biography) { this.biography = biography; }
 
     @Override
     public String toString() {
