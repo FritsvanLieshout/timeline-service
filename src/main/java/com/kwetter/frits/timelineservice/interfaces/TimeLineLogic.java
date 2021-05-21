@@ -8,4 +8,6 @@ import java.util.List;
 @Validated
 public interface TimeLineLogic {
     List<TweetTimeline> findAllOrderByDesc();
+    List<TweetTimeline> findTweetsByFollowing(String username);
+    List<TweetTimeline> findOwnTweets(String username);
 }

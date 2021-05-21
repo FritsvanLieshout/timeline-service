@@ -5,8 +5,11 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
-public interface TweetTimeLineRepository extends MongoRepository<TweetTimeline, String> {
+public interface TweetTimelineRepository extends MongoRepository<TweetTimeline, String> {
     List<TweetTimeline> findAllByOrderByTweetPostedDesc();
+    List<TweetTimeline> findAllByTweetUser_Username(String username);
+    void deleteAllByTweetUser_UsernameAndTweetUser_UserId(String username, UUID userId);
 }

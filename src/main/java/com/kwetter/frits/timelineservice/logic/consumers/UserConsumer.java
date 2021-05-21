@@ -1,10 +1,10 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
-import com.kwetter.frits.timelineservice.entity.TweetTimeline;
-import com.kwetter.frits.timelineservice.repository.TweetTimeLineRepository;
-import com.kwetter.frits.timelineservice.logic.dto.TweetTimelineDTO;
+import com.kwetter.frits.timelineservice.entity.UserTimeline;
+import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
+import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -21,22 +21,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class TweetConsumer {
+public class UserConsumer {
 
     private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "topic_timeline";
+    public static final String TOPIC = "user-created";
 
     private KafkaConsumer<String, String> kafkaConsumer;
-    private TweetTimeLineRepository tweetTimeLineRepository;
-    //private EmailService emailService;
+    private UserTimelineRepository userTimelineRepository;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public TweetConsumer(KafkaProperties kafkaProperties, TweetTimeLineRepository tweetTimeLineRepository) {
+    public UserConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository) {
         this.kafkaProperties = kafkaProperties;
-        this.tweetTimeLineRepository = tweetTimeLineRepository;
+        this.userTimelineRepository = userTimelineRepository;
     }
 
     @PostConstruct
@@ -55,20 +54,20 @@ public class TweetConsumer {
                     for (ConsumerRecord<String, String> record : records) {
                         log.info("Consumed message in {} : {}", TOPIC, record.value());
 
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        TweetTimelineDTO tweetTimelineDTO = objectMapper.readValue(record.value(), TweetTimelineDTO.class);
-                        TweetTimeline tweetTimeline = new TweetTimeline();
-                        tweetTimeline.setTweetUserId(tweetTimelineDTO.getTweetUserId());
-                        tweetTimeline.setTweetMessage(tweetTimelineDTO.getTweetMessage());
-                        tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
-                        tweetTimeLineRepository.save(tweetTimeline);
-
-                        //emailService.sendSimpleMessage(tweetTimelineDTO);
+                        var objectMapper = new ObjectMapper();
+                        var userTimelineDTO = objectMapper.readValue(record.value(), UserTimelineDTO.class);
+                        var userTimeline = new UserTimeline();
+                        userTimeline.setUserId(userTimelineDTO.getUserId());
+                        userTimeline.setUsername(userTimelineDTO.getUsername());
+                        userTimeline.setNickName(userTimelineDTO.getNickName());
+                        userTimeline.setProfileImage(userTimelineDTO.getProfileImage());
+                        userTimeline.setVerified(userTimelineDTO.getVerified());
+                        userTimeline.setBiography(userTimelineDTO.getBiography());
+                        userTimelineRepository.save(userTimeline);
                     }
                 }
                 kafkaConsumer.commitSync();
             } catch (WakeupException e) {
-                // Ignore exception if closing
                 if (!closed.get()) throw e;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -89,5 +88,4 @@ public class TweetConsumer {
         closed.set(true);
         kafkaConsumer.wakeup();
     }
-
 }
