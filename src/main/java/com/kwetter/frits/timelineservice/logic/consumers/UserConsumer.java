@@ -1,4 +1,4 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
@@ -11,8 +11,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -56,14 +54,15 @@ public class UserConsumer {
                     for (ConsumerRecord<String, String> record : records) {
                         log.info("Consumed message in {} : {}", TOPIC, record.value());
 
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        UserTimelineDTO userTimelineDTO = objectMapper.readValue(record.value(), UserTimelineDTO.class);
-                        UserTimeline userTimeline = new UserTimeline();
+                        var objectMapper = new ObjectMapper();
+                        var userTimelineDTO = objectMapper.readValue(record.value(), UserTimelineDTO.class);
+                        var userTimeline = new UserTimeline();
                         userTimeline.setUserId(userTimelineDTO.getUserId());
                         userTimeline.setUsername(userTimelineDTO.getUsername());
                         userTimeline.setNickName(userTimelineDTO.getNickName());
                         userTimeline.setProfileImage(userTimelineDTO.getProfileImage());
                         userTimeline.setVerified(userTimelineDTO.getVerified());
+                        userTimeline.setBiography(userTimelineDTO.getBiography());
                         userTimelineRepository.save(userTimeline);
                     }
                 }

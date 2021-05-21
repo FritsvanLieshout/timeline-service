@@ -19,15 +19,17 @@ public class UserTimeline implements Serializable {
     private String nickName;
     private String profileImage;
     private Boolean verified;
+    private String biography;
 
     public UserTimeline() {}
 
-    public UserTimeline(UUID userId, String username, String nickName, String profileImage, Boolean verified) {
+    public UserTimeline(UUID userId, String username, String nickName, String profileImage, Boolean verified, String biography) {
         this.userId = userId;
         this.username = username;
         this.nickName = nickName;
         this.profileImage = profileImage;
         this.verified = verified;
+        this.biography = biography;
     }
 
     public String getId() {
@@ -38,9 +40,7 @@ public class UserTimeline implements Serializable {
         this.id = id;
     }
 
-    public UUID getUserId() {
-        return userId;
-    }
+    public UUID getUserId() { return userId; }
 
     public void setUserId(UUID userId) {
         this.userId = userId;
@@ -66,9 +66,7 @@ public class UserTimeline implements Serializable {
         return profileImage;
     }
 
-    public void setProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
+    public void setProfileImage(String profileImage) { this.profileImage = profileImage; }
 
     public Boolean getVerified() {
         return verified;
@@ -77,6 +75,10 @@ public class UserTimeline implements Serializable {
     public void setVerified(Boolean verified) {
         this.verified = verified;
     }
+
+    public String getBiography() { return biography; }
+
+    public void setBiography(String biography) { this.biography = biography; }
 
     @Override
     public boolean equals(Object o) {

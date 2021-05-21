@@ -9,6 +9,7 @@ public class UserTimelineDTO {
     private String nickName;
     private String profileImage;
     private Boolean verified;
+    private String biography;
 
     public UUID getUserId() {
         return userId;
@@ -49,4 +50,8 @@ public class UserTimelineDTO {
     public void setVerified(Boolean verified) {
         this.verified = verified;
     }
+
+    public String getBiography() { return biography; }
+
+    public void setBiography(String biography) { this.biography = biography; }
 }

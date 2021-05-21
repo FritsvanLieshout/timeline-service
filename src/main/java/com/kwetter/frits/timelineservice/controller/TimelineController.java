@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -25,12 +26,41 @@ public class TimelineController {
     @GetMapping("/all")
     public ResponseEntity<List<TweetTimeline>> retrieveAllTweetsByTimeLine() {
         try {
-            List<TweetTimeline> _timeline = new ArrayList<>(timeLineLogic.findAllOrderByDesc());
+            List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findAllOrderByDesc());
 
-            if (_timeline.isEmpty()) {
+            if (timeline.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
-            return new ResponseEntity<>(_timeline, HttpStatus.OK);
+            return new ResponseEntity<>(timeline, HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/unique")
+    public ResponseEntity<List<TweetTimeline>> generateTimeline(@RequestParam String username) {
+        try {
+            List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findTweetsByFollowing(username));
+
+            if (timeline.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(timeline, HttpStatus.OK);
+        }
+        catch (Exception ex) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/own/tweets")
+    public ResponseEntity<List<TweetTimeline>> generateOwnTimeline(@RequestParam String username) {
+        try {
+            List<TweetTimeline> timeline = new ArrayList<>(timeLineLogic.findOwnTweets(username));
+            if (timeline.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(timeline, HttpStatus.OK);
         }
         catch (Exception ex) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
