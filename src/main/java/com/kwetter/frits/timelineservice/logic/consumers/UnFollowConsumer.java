@@ -1,18 +1,16 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
-import com.kwetter.frits.timelineservice.entity.TweetTimeline;
-import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
-import com.kwetter.frits.timelineservice.logic.dto.TweetTimelineDTO;
+import com.kwetter.frits.timelineservice.entity.FollowTimeline;
+import com.kwetter.frits.timelineservice.logic.dto.FollowTimelineDTO;
+import com.kwetter.frits.timelineservice.repository.FollowTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.WakeupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -23,24 +21,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class TweetConsumer {
+public class UnFollowConsumer {
 
-    @Autowired
-    SimpMessagingTemplate template;
-
-    private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
+    private final Logger log = LoggerFactory.getLogger(UnFollowConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "tweet-posted";
+    public static final String TOPIC = "user-unfollow";
 
     private KafkaConsumer<String, String> kafkaConsumer;
-    private TweetTimelineRepository tweetTimelineRepository;
+    private FollowTimelineRepository followTimelineRepository;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public TweetConsumer(KafkaProperties kafkaProperties, TweetTimelineRepository tweetTimelineRepository) {
+    public UnFollowConsumer(KafkaProperties kafkaProperties, FollowTimelineRepository followTimelineRepository) {
         this.kafkaProperties = kafkaProperties;
-        this.tweetTimelineRepository = tweetTimelineRepository;
+        this.followTimelineRepository = followTimelineRepository;
     }
 
     @PostConstruct
@@ -59,15 +54,10 @@ public class TweetConsumer {
                     for (ConsumerRecord<String, String> record : records) {
                         log.info("Consumed message in {} : {}", TOPIC, record.value());
 
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        TweetTimelineDTO tweetTimelineDTO = objectMapper.readValue(record.value(), TweetTimelineDTO.class);
-                        TweetTimeline tweetTimeline = new TweetTimeline();
-                        tweetTimeline.setTweetUser(tweetTimelineDTO.getTweetUser());
-                        tweetTimeline.setTweetMessage(tweetTimelineDTO.getTweetMessage());
-                        tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
-                        tweetTimelineRepository.save(tweetTimeline);
-
-                        listen(tweetTimeline);
+                        var objectMapper = new ObjectMapper();
+                        var followTimelineDTO = objectMapper.readValue(record.value(), FollowTimelineDTO.class);
+                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowingUsername());
+                        followTimelineRepository.deleteFollowByUsernameAndFollowingUsername(followTimeline.getUsername(), followTimeline.getFollowingUsername());
                     }
                 }
                 kafkaConsumer.commitSync();
@@ -91,10 +81,5 @@ public class TweetConsumer {
         log.info("Shutdown Kafka consumer");
         closed.set(true);
         kafkaConsumer.wakeup();
-    }
-
-    public void listen(TweetTimeline tweetTimeline) {
-        System.out.println("sending via kafka listener..");
-        template.convertAndSend("/topic_timeline", tweetTimeline);
     }
 }

@@ -1,9 +1,11 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
-import com.kwetter.frits.timelineservice.entity.UserTimeline;
 import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
+import com.kwetter.frits.timelineservice.repository.FollowTimelineRepository;
+import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
 import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -21,21 +23,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class UserConsumer {
+public class PermanentDeleteUserConsumer {
 
-    private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
+    private final Logger log = LoggerFactory.getLogger(PermanentDeleteUserConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "user-created";
+    public static final String TOPIC = "permanent-user-deleted";
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private UserTimelineRepository userTimelineRepository;
+    private FollowTimelineRepository followTimelineRepository;
+    private TweetTimelineRepository tweetTimelineRepository;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public UserConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository) {
+    public PermanentDeleteUserConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository, FollowTimelineRepository followTimelineRepository, TweetTimelineRepository tweetTimelineRepository) {
         this.kafkaProperties = kafkaProperties;
         this.userTimelineRepository = userTimelineRepository;
+        this.followTimelineRepository = followTimelineRepository;
+        this.tweetTimelineRepository = tweetTimelineRepository;
     }
 
     @PostConstruct
@@ -56,14 +62,14 @@ public class UserConsumer {
 
                         var objectMapper = new ObjectMapper();
                         var userTimelineDTO = objectMapper.readValue(record.value(), UserTimelineDTO.class);
-                        var userTimeline = new UserTimeline();
-                        userTimeline.setUserId(userTimelineDTO.getUserId());
-                        userTimeline.setUsername(userTimelineDTO.getUsername());
-                        userTimeline.setNickName(userTimelineDTO.getNickName());
-                        userTimeline.setProfileImage(userTimelineDTO.getProfileImage());
-                        userTimeline.setVerified(userTimelineDTO.getVerified());
-                        userTimeline.setBiography(userTimelineDTO.getBiography());
-                        userTimelineRepository.save(userTimeline);
+                        var user = userTimelineRepository.findUserTimelineByUsernameAndUserId(userTimelineDTO.getUsername(), userTimelineDTO.getUserId());
+
+                        if (user != null) {
+                            userTimelineRepository.deleteUserTimelineByUsernameAndUserId(user.getUsername(), user.getUserId());
+                            followTimelineRepository.deleteAllByUsername(user.getUsername());
+                            followTimelineRepository.deleteAllByFollowingUsername(user.getUsername());
+                            tweetTimelineRepository.deleteAllByTweetUser_UsernameAndTweetUser_UserId(user.getUsername(), user.getUserId());
+                        }
                     }
                 }
                 kafkaConsumer.commitSync();

@@ -11,4 +11,6 @@ public interface FollowTimelineRepository extends MongoRepository<FollowTimeline
     void deleteFollowByUsernameAndFollowingUsername(String username, String followingUsername);
     List<FollowTimeline> findAllByUsername(String username);
     List<FollowTimeline> findAllByFollowingUsername(String username);
+    void deleteAllByUsername(String username);
+    void deleteAllByFollowingUsername(String username);
 }

@@ -1,13 +1,10 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
 import com.kwetter.frits.timelineservice.entity.FollowTimeline;
-import com.kwetter.frits.timelineservice.entity.UserTimeline;
 import com.kwetter.frits.timelineservice.logic.dto.FollowTimelineDTO;
-import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
 import com.kwetter.frits.timelineservice.repository.FollowTimelineRepository;
-import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

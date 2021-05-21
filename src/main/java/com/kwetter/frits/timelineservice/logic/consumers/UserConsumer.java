@@ -1,12 +1,9 @@
-package com.kwetter.frits.timelineservice.logic;
+package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
-import com.kwetter.frits.timelineservice.entity.FollowTimeline;
 import com.kwetter.frits.timelineservice.entity.UserTimeline;
-import com.kwetter.frits.timelineservice.logic.dto.FollowTimelineDTO;
 import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
-import com.kwetter.frits.timelineservice.repository.FollowTimelineRepository;
 import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -24,21 +21,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
-public class UnFollowConsumer {
+public class UserConsumer {
 
-    private final Logger log = LoggerFactory.getLogger(UnFollowConsumer.class);
+    private final Logger log = LoggerFactory.getLogger(TweetConsumer.class);
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "user-unfollow";
+    public static final String TOPIC = "user-created";
 
     private KafkaConsumer<String, String> kafkaConsumer;
-    private FollowTimelineRepository followTimelineRepository;
+    private UserTimelineRepository userTimelineRepository;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public UnFollowConsumer(KafkaProperties kafkaProperties, FollowTimelineRepository followTimelineRepository) {
+    public UserConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository) {
         this.kafkaProperties = kafkaProperties;
-        this.followTimelineRepository = followTimelineRepository;
+        this.userTimelineRepository = userTimelineRepository;
     }
 
     @PostConstruct
@@ -58,9 +55,15 @@ public class UnFollowConsumer {
                         log.info("Consumed message in {} : {}", TOPIC, record.value());
 
                         var objectMapper = new ObjectMapper();
-                        var followTimelineDTO = objectMapper.readValue(record.value(), FollowTimelineDTO.class);
-                        var followTimeline = new FollowTimeline(followTimelineDTO.getUsername(), followTimelineDTO.getFollowingUsername());
-                        followTimelineRepository.deleteFollowByUsernameAndFollowingUsername(followTimeline.getUsername(), followTimeline.getFollowingUsername());
+                        var userTimelineDTO = objectMapper.readValue(record.value(), UserTimelineDTO.class);
+                        var userTimeline = new UserTimeline();
+                        userTimeline.setUserId(userTimelineDTO.getUserId());
+                        userTimeline.setUsername(userTimelineDTO.getUsername());
+                        userTimeline.setNickName(userTimelineDTO.getNickName());
+                        userTimeline.setProfileImage(userTimelineDTO.getProfileImage());
+                        userTimeline.setVerified(userTimelineDTO.getVerified());
+                        userTimeline.setBiography(userTimelineDTO.getBiography());
+                        userTimelineRepository.save(userTimeline);
                     }
                 }
                 kafkaConsumer.commitSync();
