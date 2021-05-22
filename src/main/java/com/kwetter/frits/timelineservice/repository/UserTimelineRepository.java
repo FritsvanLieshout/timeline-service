@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Component
 public interface UserTimelineRepository extends MongoRepository<UserTimeline, String> {
-    void deleteUserTimelineByUsernameAndUserId(String username, UUID userId);
+    void deleteUserTimelineByUsername(String username);
     UserTimeline findUserTimelineByUsernameAndUserId(String username, UUID userId);
     UserTimeline findUserTimelineByUsername(String username);
 }

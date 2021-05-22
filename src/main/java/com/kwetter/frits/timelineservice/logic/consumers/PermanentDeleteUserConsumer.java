@@ -29,7 +29,7 @@ public class PermanentDeleteUserConsumer {
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final KafkaProperties kafkaProperties;
 
-    public static final String TOPIC = "permanent-user-deleted";
+    public static final String TOPIC = "user-deleted";
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private UserTimelineRepository userTimelineRepository;
@@ -65,10 +65,10 @@ public class PermanentDeleteUserConsumer {
                         var user = userTimelineRepository.findUserTimelineByUsernameAndUserId(userTimelineDTO.getUsername(), userTimelineDTO.getUserId());
 
                         if (user != null) {
-                            userTimelineRepository.deleteUserTimelineByUsernameAndUserId(user.getUsername(), user.getUserId());
+                            userTimelineRepository.deleteUserTimelineByUsername(user.getUsername());
                             followTimelineRepository.deleteAllByUsername(user.getUsername());
                             followTimelineRepository.deleteAllByFollowingUsername(user.getUsername());
-                            tweetTimelineRepository.deleteAllByTweetUser_UsernameAndTweetUser_UserId(user.getUsername(), user.getUserId());
+                            tweetTimelineRepository.deleteAllByTweetUser_Username(user.getUsername());
                         }
                     }
                 }
