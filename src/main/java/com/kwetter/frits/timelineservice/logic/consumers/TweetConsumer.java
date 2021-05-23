@@ -65,6 +65,8 @@ public class TweetConsumer {
                         tweetTimeline.setTweetUser(tweetTimelineDTO.getTweetUser());
                         tweetTimeline.setTweetMessage(tweetTimelineDTO.getTweetMessage());
                         tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
+                        tweetTimeline.setTweetMentions(tweetTimelineDTO.getTweetMentions());
+                        tweetTimeline.setTweetHashtags(tweetTimelineDTO.getTweetHashtags());
                         tweetTimelineRepository.save(tweetTimeline);
 
                         listen(tweetTimeline);

@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Document(collection = "tweet_timeline")
 public class TweetTimeline implements Serializable {
@@ -26,6 +27,12 @@ public class TweetTimeline implements Serializable {
     @NotNull
     @Field("tweet_posted")
     private String tweetPosted;
+
+    @Field("tweet_mentions")
+    private List<String> tweetMentions;
+
+    @Field("tweet_hashtags")
+    private List<String> tweetHashtags;
 
     public String getId() {
         return id;
@@ -71,6 +78,24 @@ public class TweetTimeline implements Serializable {
 
     public TweetTimeline tweetPosted(String tweetPosted) {
         this.tweetPosted = tweetPosted;
+        return this;
+    }
+
+    public List<String> getTweetMentions() { return tweetMentions; }
+
+    public void setTweetMentions(List<String> tweetMentions) { this.tweetMentions = tweetMentions; }
+
+    public TweetTimeline tweetMentions(List<String> tweetMentions) {
+        this.tweetMentions = tweetMentions;
+        return this;
+    }
+
+    public List<String> getTweetHashtags() { return tweetHashtags; }
+
+    public void setTweetHashtags(List<String> tweetHashtags) { this.tweetHashtags = tweetHashtags; }
+
+    public TweetTimeline tweetHashtags(List<String> tweetHashtags) {
+        this.tweetHashtags = tweetHashtags;
         return this;
     }
 
