@@ -10,5 +10,6 @@ import java.util.List;
 public interface TweetTimelineRepository extends MongoRepository<TweetTimeline, String> {
     List<TweetTimeline> findAllByOrderByTweetPostedDesc();
     List<TweetTimeline> findAllByTweetUser_Username(String username);
+    TweetTimeline findTweetTimelineById(String id);
     void deleteAllByTweetUser_Username(String username);
 }

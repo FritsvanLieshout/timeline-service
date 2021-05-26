@@ -2,7 +2,10 @@ package com.kwetter.frits.timelineservice.logic.consumers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
+import com.kwetter.frits.timelineservice.entity.TweetUser;
+import com.kwetter.frits.timelineservice.entity.UserTimeline;
 import com.kwetter.frits.timelineservice.logic.dto.UserTimelineDTO;
+import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
 import com.kwetter.frits.timelineservice.repository.UserTimelineRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -30,11 +33,13 @@ public class UserEditConsumer {
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private UserTimelineRepository userTimelineRepository;
+    private TweetTimelineRepository tweetTimelineRepository;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public UserEditConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository) {
+    public UserEditConsumer(KafkaProperties kafkaProperties, UserTimelineRepository userTimelineRepository, TweetTimelineRepository tweetTimelineRepository) {
         this.kafkaProperties = kafkaProperties;
         this.userTimelineRepository = userTimelineRepository;
+        this.tweetTimelineRepository = tweetTimelineRepository;
     }
 
     @PostConstruct
@@ -62,6 +67,8 @@ public class UserEditConsumer {
                             user.setBiography(userTimelineDTO.getBiography());
                             user.setVerified(userTimelineDTO.getVerified());
                             userTimelineRepository.save(user);
+
+                            updateUserDataInTweetObject(user);
                         }
                     }
                 }
@@ -86,5 +93,23 @@ public class UserEditConsumer {
         log.info("Shutdown Kafka consumer");
         closed.set(true);
         kafkaConsumer.wakeup();
+    }
+
+    private void updateUserDataInTweetObject(UserTimeline user) {
+        var ownTweets = tweetTimelineRepository.findAllByTweetUser_Username(user.getUsername());
+        if (!ownTweets.isEmpty()) {
+            for (var ownTweet : ownTweets) {
+                var tweet = tweetTimelineRepository.findTweetTimelineById(ownTweet.getId());
+                if (tweet != null) {
+                    var tweetUser = tweet.getTweetUser();
+                    tweetUser.setNickName(user.getNickName());
+                    tweetUser.setProfileImage(user.getProfileImage());
+                    tweetUser.setVerified(user.getVerified());
+                    tweetUser.setBiography(user.getBiography());
+                    tweet.setTweetUser(tweetUser);
+                    tweetTimelineRepository.save(tweet);
+                }
+            }
+        }
     }
 }
