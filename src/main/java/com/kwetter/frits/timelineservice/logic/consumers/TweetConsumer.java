@@ -3,6 +3,7 @@ package com.kwetter.frits.timelineservice.logic.consumers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kwetter.frits.timelineservice.configuration.KafkaProperties;
 import com.kwetter.frits.timelineservice.entity.TweetTimeline;
+import com.kwetter.frits.timelineservice.logic.NotifyLogicImpl;
 import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
 import com.kwetter.frits.timelineservice.logic.dto.TweetTimelineDTO;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -36,11 +37,13 @@ public class TweetConsumer {
 
     private KafkaConsumer<String, String> kafkaConsumer;
     private TweetTimelineRepository tweetTimelineRepository;
+    private NotifyLogicImpl notifyLogic;
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    public TweetConsumer(KafkaProperties kafkaProperties, TweetTimelineRepository tweetTimelineRepository) {
+    public TweetConsumer(KafkaProperties kafkaProperties, TweetTimelineRepository tweetTimelineRepository, NotifyLogicImpl notifyLogic) {
         this.kafkaProperties = kafkaProperties;
         this.tweetTimelineRepository = tweetTimelineRepository;
+        this.notifyLogic = notifyLogic;
     }
 
     @PostConstruct
@@ -59,9 +62,9 @@ public class TweetConsumer {
                     for (ConsumerRecord<String, String> record : records) {
                         log.info("Consumed message in {} : {}", TOPIC, record.value());
 
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        TweetTimelineDTO tweetTimelineDTO = objectMapper.readValue(record.value(), TweetTimelineDTO.class);
-                        TweetTimeline tweetTimeline = new TweetTimeline();
+                        var objectMapper = new ObjectMapper();
+                        var tweetTimelineDTO = objectMapper.readValue(record.value(), TweetTimelineDTO.class);
+                        var tweetTimeline = new TweetTimeline();
                         tweetTimeline.setTweetUser(tweetTimelineDTO.getTweetUser());
                         tweetTimeline.setTweetMessage(tweetTimelineDTO.getTweetMessage());
                         tweetTimeline.setTweetPosted(tweetTimelineDTO.getTweetPosted());
@@ -69,7 +72,8 @@ public class TweetConsumer {
                         tweetTimeline.setTweetHashtags(tweetTimelineDTO.getTweetHashtags());
                         tweetTimelineRepository.save(tweetTimeline);
 
-                        listen(tweetTimeline);
+                        notifyLogic.notifyFollowers(tweetTimeline.getTweetUser().getUsername());
+                        //listen(tweetTimeline);
                     }
                 }
                 kafkaConsumer.commitSync();

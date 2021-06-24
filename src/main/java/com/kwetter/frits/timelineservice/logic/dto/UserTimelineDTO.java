@@ -10,6 +10,7 @@ public class UserTimelineDTO {
     private String profileImage;
     private Boolean verified;
     private String biography;
+    private String role;
 
     public UUID getUserId() {
         return userId;
@@ -54,4 +55,8 @@ public class UserTimelineDTO {
     public String getBiography() { return biography; }
 
     public void setBiography(String biography) { this.biography = biography; }
+
+    public String getRole() { return role; }
+
+    public void setRole(String role) { this.role = role; }
 }

@@ -5,8 +5,6 @@ import com.kwetter.frits.timelineservice.entity.TweetTimeline;
 import com.kwetter.frits.timelineservice.interfaces.TimeLineLogic;
 import com.kwetter.frits.timelineservice.repository.FollowTimelineRepository;
 import com.kwetter.frits.timelineservice.repository.TweetTimelineRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,7 +16,6 @@ public class TimelineLogicImpl implements TimeLineLogic {
 
     private final TweetTimelineRepository tweetTimeLineRepository;
     private final FollowTimelineRepository followTimelineRepository;
-    private final Logger log = LoggerFactory.getLogger(TimelineLogicImpl.class);
 
     public TimelineLogicImpl(TweetTimelineRepository tweetTimeLineRepository, FollowTimelineRepository followTimelineRepository) {
         this.tweetTimeLineRepository = tweetTimeLineRepository;
